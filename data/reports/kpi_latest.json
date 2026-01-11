@@ -1,0 +1,18 @@
+{
+  "generated_at_utc": "2026-01-11T16:54:12.726566+00:00",
+  "source_file": "data/silver/silver_20260111_165411_de.parquet",
+  "aircraft_total": 465,
+  "aircraft_with_position": 465,
+  "dq_ok": 465,
+  "dq_ok_rate": 1.0,
+  "on_ground": 45,
+  "avg_velocity_ms": 164.23862365591395,
+  "max_velocity_ms": 299.78,
+  "top_origin_countries": {
+    "Germany": 118,
+    "Switzerland": 36,
+    "Ireland": 31,
+    "Turkey": 30,
+    "United Kingdom": 30
+  }
+}
