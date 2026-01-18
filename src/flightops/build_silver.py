@@ -25,7 +25,7 @@ COLUMNS = [
 
 
 def latest_raw_file() -> Path:
-    files = sorted(Path("data/raw").glob("states_*_de.json"))
+    files = sorted(Path("data/raw").glob("states_*.json"))
     if not files:
         raise FileNotFoundError("No raw files found in data/raw. Run fetch_states.py first.")
     return files[-1]
@@ -38,11 +38,9 @@ def main() -> None:
 
     df = pd.DataFrame(states, columns=COLUMNS)
 
-    # Cleanup
     df["callsign"] = df["callsign"].astype("string").str.strip()
     df["origin_country"] = df["origin_country"].astype("string")
 
-    # Numeric conversions
     for col in [
         "longitude",
         "latitude",
@@ -54,11 +52,8 @@ def main() -> None:
     ]:
         df[col] = pd.to_numeric(df[col], errors="coerce")
 
-    # Minimal Data Quality rules
     df["dq_has_position"] = df["latitude"].notna() & df["longitude"].notna()
-    df["dq_velocity_ok"] = df["velocity"].isna() | (
-        (df["velocity"] >= 0) & (df["velocity"] <= 400)
-    )
+    df["dq_velocity_ok"] = df["velocity"].isna() | ((df["velocity"] >= 0) & (df["velocity"] <= 400))
     df["dq_ok"] = df["dq_has_position"] & df["dq_velocity_ok"]
 
     out_dir = Path("data/silver")

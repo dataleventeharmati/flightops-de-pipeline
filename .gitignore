@@ -1,0 +1,21 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+
+# Runtime data
+data/raw/
+data/silver/
+data/reports/
+logs/
+
+# Generated demo artifacts
+assets/demo/palette.png
+assets/demo/demo.mov
+
+# Secrets
+.env
+.env.*

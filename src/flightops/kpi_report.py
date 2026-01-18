@@ -34,10 +34,20 @@ def main() -> None:
 
     out_dir = Path("data/reports")
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_path = out_dir / "kpi_latest.json"
-    out_path.write_text(json.dumps(kpi, indent=2), encoding="utf-8")
 
-    print(f"Wrote: {out_path}")
+    # latest
+    latest_path = out_dir / "kpi_latest.json"
+    latest_path.write_text(json.dumps(kpi, indent=2), encoding="utf-8")
+
+    # history
+    hist_dir = out_dir / "history"
+    hist_dir.mkdir(parents=True, exist_ok=True)
+    ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    hist_path = hist_dir / f"kpi_{ts}.json"
+    hist_path.write_text(json.dumps(kpi, indent=2), encoding="utf-8")
+
+    print(f"Wrote: {latest_path}")
+    print(f"Wrote: {hist_path}")
     print(json.dumps(kpi, indent=2))
 
 
