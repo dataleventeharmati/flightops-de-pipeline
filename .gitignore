@@ -1,21 +1,49 @@
 # Python
-.venv/
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
 
-# OS
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Coverage / build
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# OS / editor
 .DS_Store
+.vscode/
+.idea/
 
-# Runtime data
-data/raw/
-data/silver/
-data/reports/
-logs/
-
-# Generated demo artifacts
-assets/demo/palette.png
-assets/demo/demo.mov
-
-# Secrets
+# Environment / secrets
 .env
-.env.*
+
+# Runtime logs
+logs/
+*.log
+
+# Runtime data artifacts
+data/raw/*.json
+data/silver/*.parquet
+data/reports/*.json
+data/reports/history/*.json
+
+# Keep folder placeholders
+!data/raw/.gitkeep
+!data/silver/.gitkeep
+!data/reports/.gitkeep
+!data/reports/history/.gitkeep
+
+# Keep demo assets
+!assets/demo/demo.gif
+!assets/demo/demo.mov
+!assets/demo/palette.png

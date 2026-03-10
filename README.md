@@ -1,149 +1,258 @@
 # FlightOps Data Engineering Pipeline
 
-A production-style Data Engineering portfolio project that ingests real-time global flight telemetry data, builds curated Parquet datasets, calculates KPIs with historical tracking, and serves analytics through both SQL (Athena) and an interactive dashboard.
+![CI](https://github.com/dataleventeharmati/flightops-de-pipeline/actions/workflows/ci.yml/badge.svg)
+![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Status](https://img.shields.io/badge/status-medior--portfolio-success)
 
-This project is designed to demonstrate end-to-end pipeline thinking: ingestion, transformation, data quality, cloud analytics, automation, and cost-aware operation.
+Production-style Data Engineering portfolio project that ingests live flight telemetry data, builds curated analytical datasets, calculates KPIs, and exposes outputs through SQL-friendly and dashboard-ready consumption layers.
+
+The project is designed to demonstrate end-to-end pipeline thinking: ingestion, transformation, data quality, historical KPI tracking, cloud analytics, and operational reporting.
+
+---
 
 ## Demo
 
 ![FlightOps Demo](assets/demo/demo.gif)
 
-## Project overview
+---
 
-The pipeline collects live aircraft state data, transforms it into a structured analytical format, and exposes insights through multiple consumption layers. It emphasizes reliability, clarity, and production-oriented design choices rather than experimental features.
+## Business case
 
-Key goals:
-- Demonstrate a realistic Data Engineering workflow
-- Work with real, continuously changing data
-- Separate raw ingestion from curated analytical data
-- Enable both SQL analytics and dashboard-based exploration
-- Apply basic production hardening (logging, cost control, permissions)
+Operations and analytics teams need near-real-time visibility into flight activity, regional traffic patterns, aircraft movement quality, and outlier behavior.
+
+This project simulates a realistic analytics workflow where continuously changing raw telemetry snapshots are transformed into curated analytical outputs that support:
+
+- operational visibility
+- trend tracking over time
+- regional KPI analysis
+- anomaly and outlier inspection
+- SQL-based exploration in Athena
+- dashboard-based portfolio demonstration
+
+---
+
+## What this project demonstrates
+
+- modular Python package structure under `src/`
+- raw to curated transformation flow
+- Parquet-based analytical output layer
+- KPI generation with historical tracking
+- dashboard-ready reporting
+- Athena-ready SQL analytics
+- local-to-cloud DE workflow design
+- logging, testing, and CI integration
+
+---
 
 ## Architecture
 
-Local pipeline flow:
-1. Fetch global flight states and store raw JSON snapshots
-2. Transform raw data into a curated silver layer in Parquet format
-3. Apply data quality checks and compute KPIs
-4. Store KPI snapshots for historical trend analysis
-5. Upload curated outputs to Amazon S3
+```mermaid
+flowchart TD
+    A[Live Flight Telemetry API] --> B[Raw JSON Snapshots]
+    B --> C[Transform and Validation]
+    C --> D[Curated Silver Parquet Layer]
+    C --> E[Data Quality Checks]
+    D --> F[KPI Aggregation]
+    F --> G[Historical KPI Snapshots]
+    D --> H[Athena External Table]
+    H --> I[Athena SQL Queries and Views]
+    F --> J[Dashboard Outputs]
+    G --> J
+    I --> J
+    J --> K[Streamlit Dashboard]
+```
 
-Cloud analytics:
-- Amazon S3 stores Parquet datasets and KPI reports
-- Amazon Athena queries Parquet through an external table
-- Athena views implement business logic such as region segmentation
-- An Athena workgroup enforces per-query cost limits
+---
 
-## Project structure
+## Repository structure
 
-FlightOps-DE-Pipeline/
-  assets/
-    demo/
-      demo.gif
-  athena/
-    q01_region_kpi.sql
-    q02_top_corridors.sql
-    q03_speed_outliers.sql
-  data/
-    raw/
-    silver/
-    reports/
-      history/
-  logs/
-    runs/
-  scripts/
-    run_all.sh
-    upload_to_s3.sh
-  src/
-    flightops/
-      fetch_states.py
-      build_silver.py
-      kpi_report.py
-      region_kpi_report.py
-  dashboard.py
-  README.md
+```text
+.
+├── assets/demo/            # demo visuals
+├── athena/                 # Athena SQL queries
+├── data/
+│   ├── raw/                # raw JSON snapshots
+│   ├── silver/             # curated Parquet outputs
+│   └── reports/            # KPI and analytical reports
+├── logs/                   # run logs
+├── scripts/                # pipeline runner scripts
+├── src/flightops/          # main package
+├── tests/                  # pytest test suite
+├── dashboard.py            # Streamlit dashboard entrypoint
+├── pyproject.toml
+└── README.md
+```
 
-## Data pipeline
+---
 
-Raw layer:
-- JSON snapshots of live aircraft state data
-- Immutable, timestamped files
+## Tech stack
 
-Silver layer:
-- Parquet format optimized for analytics
-- Normalized columns
-- Explicit data quality flags
+- Python
+- Pandas
+- PyArrow
+- Requests
+- Streamlit
+- Pytest
+- Ruff
+- GitHub Actions
+- Amazon S3
+- Amazon Athena
 
-KPIs:
-- Total aircraft count
-- Aircraft with valid position
-- On-ground vs in-air distribution
-- Average and maximum velocity
-- Data quality success rate
-- Region-based aggregation
+---
 
-Each pipeline run generates a unique run identifier and a corresponding log file.
+## Pipeline flow
+
+1. Fetch live flight state snapshots from the source API
+2. Persist raw timestamped JSON files
+3. Transform raw telemetry into curated Parquet outputs
+4. Apply basic data quality rules
+5. Calculate KPI summaries
+6. Persist latest KPI outputs and historical KPI snapshots
+7. Query curated data through Athena SQL
+8. Surface results in the dashboard
+
+---
+
+## Outputs
+
+The pipeline produces artifacts such as:
+
+- raw flight state snapshots in JSON
+- curated silver-layer Parquet datasets
+- latest KPI report outputs
+- region KPI summaries
+- Athena-ready analytical data
+- dashboard-ready outputs
+- execution logs
+
+### Example KPI output
+
+```json
+{
+  "run_id": "20260310_100846_global",
+  "aircraft_total": 14872,
+  "aircraft_with_position": 14211,
+  "aircraft_on_ground": 3189,
+  "aircraft_in_air": 11022,
+  "avg_velocity": 221.4,
+  "max_velocity": 287.9,
+  "dq_success_rate": 0.982
+}
+```
+
+### Example regional KPI output
+
+```json
+{
+  "region": "Europe",
+  "aircraft_total": 4211,
+  "avg_velocity": 205.7,
+  "on_ground_ratio": 0.18,
+  "dq_success_rate": 0.989
+}
+```
+
+---
 
 ## Data quality
 
-Basic data quality rules are applied during transformation, including:
-- Valid latitude and longitude ranges
-- Non-negative velocity values
-- Controlled null handling for optional fields
+Basic data quality rules are applied during transformation, for example:
 
-Each record is marked with a boolean data quality flag, and aggregate data quality rates are tracked over time.
+- valid latitude and longitude ranges
+- non-negative velocity values
+- controlled handling of null optional fields
+- consistent analytical typing for curated outputs
 
-## Dashboard
+Each run can be evaluated for data quality success rate, making the project more realistic than a simple ingestion-only demo.
 
-The Streamlit dashboard provides:
-- A global aircraft position map
-- Current KPI overview
-- KPI trend history based on stored snapshots
-- Regional KPI breakdown
-- Velocity distribution awareness
-
-The dashboard reads from the latest curated outputs and reflects the most recent successful pipeline run.
+---
 
 ## Athena analytics
 
-The project includes ready-to-run Athena SQL queries:
-- Region-level KPI aggregation
-- Top origin-country and region corridors
-- Velocity outlier inspection
+The repository includes Athena SQL examples such as:
 
-Business logic for regional classification is implemented as an Athena view to keep transformations transparent and queryable.
+- region-level KPI aggregation
+- top corridors analysis
+- speed outlier inspection
 
-## Running the pipeline
+This helps position the project as more than a Python ETL demo: it also shows downstream analytical consumption design.
 
-Run the full pipeline with:
+---
+
+## Quickstart
+
+Create and activate a virtual environment:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -e '.[dev]'
+```
+
+Run tests:
+
+```bash
+pytest
+```
+
+Lint the project:
+
+```bash
+ruff check .
+```
+
+Run the full pipeline:
+
+```bash
 ./scripts/run_all.sh
+```
 
-This executes the full pipeline, writes logs, updates KPIs, and uploads results to S3.
+Start the dashboard:
 
-## Cloud configuration notes
+```bash
+streamlit run dashboard.py
+```
 
-- Curated data and reports are stored in Amazon S3
-- Athena queries Parquet data via an external table
-- An Athena workgroup enforces per-query data scan limits
-- Query metrics are published to CloudWatch
-- Credentials are never committed to the repository
+---
 
-## Cost and security considerations
+## Why this is portfolio-relevant
 
-- Project-scoped IAM user with limited permissions
-- No wildcard administrative access required
-- Athena workgroup with strict per-query scan limits
-- Separation between raw, curated, and analytical layers
-- No sensitive data stored or transmitted
+This repository is positioned as a junior-to-medior Data Engineering portfolio project.
 
-## Intended use
+It highlights skills that hiring managers and freelance clients can verify quickly:
 
-This project is intended as:
-- A Data Engineering portfolio reference
-- A technical discussion artifact for interviews
-- A foundation for extending into cloud-native orchestration or BI tooling
+- ingestion design
+- curated data modeling
+- analytics-oriented storage choices
+- KPI reporting
+- SQL consumption layer awareness
+- cloud analytics thinking
+- maintainability and reproducibility
 
-It is not intended as a production aviation tracking system.
+---
+
+## Current limitations
+
+- dependent on external telemetry source availability
+- local orchestration only
+- lightweight CI baseline
+- no warehouse orchestration framework yet
+
+These are deliberate scope decisions to keep the project focused, portable, and easy to review.
+
+---
+
+## Possible next improvements
+
+- stronger schema validation
+- Docker packaging
+- richer dashboard storytelling
+- scheduled orchestration
+- alerting on KPI anomalies
+
+---
 
 ## License
 
