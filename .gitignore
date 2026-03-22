@@ -47,3 +47,4 @@ data/reports/history/*.json
 !assets/demo/demo.gif
 !assets/demo/demo.mov
 !assets/demo/palette.png
+data/
