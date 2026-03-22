@@ -257,3 +257,32 @@ These are deliberate scope decisions to keep the project focused, portable, and 
 ## License
 
 MIT License
+
+---
+
+## 🔄 Pipeline Overview
+
+This project simulates a real-time flight data pipeline:
+
+1. **Ingestion**
+   - Fetch raw flight states from API → `data/raw/`
+
+2. **Transformation**
+   - Normalize schema
+   - Clean numeric fields
+   - Apply data quality rules (DQ flags)
+
+3. **Data Quality**
+   - Position validation
+   - Velocity sanity checks
+   - Combined DQ score
+
+4. **Output**
+   - Silver layer → `data/silver/*.parquet`
+   - KPI reports → `data/reports/`
+
+5. **Analytics**
+   - KPI summary
+   - Region-based aggregation
+   - Dashboard visualization
+
